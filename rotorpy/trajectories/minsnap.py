@@ -164,6 +164,7 @@ class MinSnap(object):
     def __init__(self, points, yaw_angles=None, yaw_rate_max=2*np.pi, 
                 poly_degree=7, yaw_poly_degree=7,
                 v_max=3, v_avg=1, v_start=[0, 0, 0], v_end=[0, 0, 0],
+                delta_t=None,
                 verbose=True):
         """
         Waypoints and yaw angles compose the "keyframes" for optimizing over. 
@@ -209,7 +210,10 @@ class MinSnap(object):
         if self.points.shape[0] >= 2:
 
             ################## Time allocation
-            self.delta_t = seg_dist/self.v_avg # Compute the segment durations based on the average velocity
+            if delta_t is None:
+                self.delta_t = seg_dist/self.v_avg # Compute the segment durations based on the average velocity
+            else:
+                self.delta_t = delta_t
             self.t_keyframes = np.concatenate(([0], np.cumsum(self.delta_t)))  # Construct time array which indicates when the quad should be at the i'th waypoint. 
 
             ################## Cost function
